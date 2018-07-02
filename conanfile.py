@@ -34,6 +34,12 @@ class QcaConan(ConanFile):
             'set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" )',
             'set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" )',
         )
+        # adapt sasl find module
+        os.rename("Findcyrus-sasl-sasl2.cmake", "FindSasl2.cmake")
+        replace_in_file("FindSasl2.cmake", "cyrus-sasl-sasl2_", "SASL2_")
+        replace_in_file("FindSasl2.cmake", "SASL2_LIBRARIES_TARGETS", "SASL2_LIBRARIES")
+        replace_in_file("FindSasl2.cmake", "SASL2_INCLUDE_DIRS", "SASL2_INCLUDE_DIR")
+        
         cmake.configure()
         cmake.build()
         
