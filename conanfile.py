@@ -6,18 +6,20 @@ from conans.tools import replace_in_file
 class QcaConan(ConanFile):
     name = "qca"
     description = "Qt Cryptographic Architecture"
-    version = "2.2.0"
+    version = "2.3.0.1"
     license = "LGPL 2.1"
-    url = "https://github.com/KDE/qca"
+    url = "https://github.com/psi-im/qca"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True]}
     default_options = "shared=True"
     generators = "cmake_find_package"
-    requires = "Qt/5.11.0@bincrafters/stable", "OpenSSL/1.0.2o@conan/stable", "cyrus-sasl-sasl2/2.1.26@rion/stable"
-    scm = {
+    requires = "qt/[>=5.5.0]@bincrafters/stable", "openssl/1.1.1g"  # , "cyrus-sasl-sasl2/[>=2.1.27]@rion/stable"
+
+    scm_to_conandata = True
+    scm={
         "type": "git",
-        "url": "https://github.com/KDE/qca.git",
-        "revision": "da4d1d06d4f67104738cb027b215eb41293c85cd" # 2.2.0 + fixes
+        "url": "https://github.com/psi-im/qca.git",
+        "revision": "ebe945ef67d74952c932f513f51959e875abf8ee" # 2.3.0 + fixes
     }
 
     def build(self):
@@ -26,8 +28,8 @@ class QcaConan(ConanFile):
         replace_in_file("FindOpenSSL.cmake", "OpenSSL_", "OPENSSL_")
         replace_in_file("FindOpenSSL.cmake", "OPENSSL_INCLUDES", "OPENSSL_INCLUDE_DIR")
         replace_in_file(os.path.join("plugins", "qca-ossl", "CMakeLists.txt"),
-            'OPENSSL_LIBRARIES',
-            'OPENSSL_LIBRARIES_TARGETS',
+            'OpenSSL::SSL OpenSSL::Crypto',
+            'OpenSSL::OpenSSL',
         )
         # and this one is a kind of bug in qca's cmakelists
         replace_in_file("CMakeLists.txt",
@@ -35,12 +37,13 @@ class QcaConan(ConanFile):
             'set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" )',
         )
         # adapt sasl find module
-        os.rename("Findcyrus-sasl-sasl2.cmake", "FindSasl2.cmake")
-        replace_in_file("FindSasl2.cmake", "cyrus-sasl-sasl2_", "SASL2_")
-        replace_in_file("FindSasl2.cmake", "SASL2_LIBRARIES_TARGETS", "SASL2_LIBRARIES")
-        replace_in_file("FindSasl2.cmake", "SASL2_INCLUDE_DIRS", "SASL2_INCLUDE_DIR")
+        if os.path.exists("Findcyrus-sasl-sasl2.cmake"):
+            os.rename("Findcyrus-sasl-sasl2.cmake", "FindSasl2.cmake")
+            replace_in_file("FindSasl2.cmake", "cyrus-sasl-sasl2_", "SASL2_")
+            replace_in_file("FindSasl2.cmake", "SASL2_LIBRARIES_TARGETS", "SASL2_LIBRARIES")
+            replace_in_file("FindSasl2.cmake", "SASL2_INCLUDE_DIRS", "SASL2_INCLUDE_DIR")
         
-        cmake.configure()
+        cmake.configure(['-DBUILD_PLUGINS=ossl'])
         cmake.build()
         
     def package(self):
