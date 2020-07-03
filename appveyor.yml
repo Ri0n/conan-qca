@@ -5,7 +5,7 @@ environment:
     PYTHON_VERSION: "3.8.0"
     PYTHON_ARCH: "32"
 
-    CONAN_REFERENCE: "qca/2.3.0"
+    CONAN_REFERENCE: "qca/2.3.0.1"
     CONAN_USERNAME: "rion"
     CONAN_LOGIN_USERNAME: "rion"
     CONAN_CHANNEL: "testing"
