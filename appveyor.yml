@@ -19,7 +19,7 @@ environment:
 
 
 install:
-  - set PATH=%PYTHON_HOME%;%PATH%;%PYTHON%/Scripts/
+  - set PATH=%PYTHON_HOME%;%PATH%;%PYTHON_HOME%/Scripts/
   - python -Wignore -m pip install conan --upgrade
   - python -Wignore -m pip install conan_package_tools
   - conan user # It creates the conan data directory
