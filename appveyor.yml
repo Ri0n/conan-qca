@@ -12,8 +12,6 @@ environment:
     CONAN_UPLOAD: "https://api.bintray.com/conan/rion/common"
 
     matrix:
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-          CONAN_VISUAL_VERSIONS: 15
         - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
           CONAN_VISUAL_VERSIONS: 16
 
